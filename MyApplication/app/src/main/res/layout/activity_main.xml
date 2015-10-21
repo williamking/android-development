@@ -1,0 +1,82 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+    >
+
+    <TextView android:text="@string/welcome" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ff76ff4f"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textView" />
+    <ImageView
+        android:src="@drawable/crab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TableLayout
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tableLayout"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp">
+
+        <TableRow>
+            <TextView android:text="User:"/>
+            <EditText
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:hint="Input your user account here"
+                android:layout_below="@+id/imageView"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/editText" />
+        </TableRow>
+
+        <TableRow>
+            <TextView android:text="Password:"/>
+            <EditText
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:hint="Input your password here"
+                android:layout_below="@+id/imageView"
+                android:layout_centerHorizontal="true" />
+        </TableRow>
+
+    </TableLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tableLayout"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/linearLayout">
+        <Button
+            android:layout_width="wrap_content"
+            android:text="Login"
+            android:layout_height="wrap_content" />
+        <Button
+            android:layout_width="wrap_content"
+            android:text="Register"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_below="@+id/linearLayout"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
