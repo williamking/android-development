@@ -22,11 +22,19 @@ public class MainActivity extends AppCompatActivity {
         layout = new TableLayout(mContext);
         RelativeLayout.LayoutParams mLayoutParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        view = (TextView)findViewById(R.id.number);
+        numbers = (TextView)findViewById(R.id.number);
         RelativeLayout root = (RelativeLayout)findViewById(R.id.root);
         mLayoutParams.addRule(RelativeLayout.BELOW, R.id.number);
         root.addView(layout, mLayoutParams);
         int i, j;
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String text = numbers.getText().toString();
+                if (text.length() > 11) return;
+                numbers.setText(text + ((Button)view).getText().toString());
+            }
+        };
         for (i = 0; i < 3; ++i) {
             TableRow row = new TableRow(mContext);
             for (j = 1; j <=3; ++j) {
@@ -34,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 button.setText(i * 3 + j + "");
                 button.setGravity(Gravity.CENTER);
                 row.addView(button);
+                button.setOnClickListener(listener);
             }
             layout.addView(row);
         }
@@ -41,5 +50,5 @@ public class MainActivity extends AppCompatActivity {
 
     private Context mContext;
     private TableLayout layout;
-    private TextView view;
+    private TextView numbers;
 }
