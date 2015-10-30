@@ -12,12 +12,16 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.beans.EventHandler;
+import java.lang.Override;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mContext = this;
         layout = new TableLayout(mContext);
         RelativeLayout.LayoutParams mLayoutParams = new RelativeLayout.LayoutParams(
@@ -26,6 +30,13 @@ public class MainActivity extends AppCompatActivity {
         RelativeLayout root = (RelativeLayout)findViewById(R.id.root);
         mLayoutParams.addRule(RelativeLayout.BELOW, R.id.number);
         root.addView(layout, mLayoutParams);
+        View.OnClickListener listener = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                number.setText(number.getText() + ((Button)view).getText());
+            }
+        }
+
         int i, j;
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
@@ -41,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 Button button = new Button(mContext);
                 button.setText(i * 3 + j + "");
                 button.setGravity(Gravity.CENTER);
+                button.setOnClickListener(listener);
                 row.addView(button);
                 button.setOnClickListener(listener);
             }
