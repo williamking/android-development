@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Inflater;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends AppCompatActivity {
 
     public class FruitAdapter extends ArrayAdapter<Fruit> {
         private int resourceId;
@@ -38,17 +38,23 @@ public class MainActivity extends ListActivity {
             ImageView img = (ImageView)convertView.findViewById(R.id.img);
             TextView name = (TextView)convertView.findViewById(R.id.name);
             img.setImageResource(fruit.getImageId());
+            //ViewGroup.LayoutParams para = name.getLayoutParams();
+            //para.width = img.getWidth();
+            //para.height = img.getHeight();
+            //name.setLayoutParams(para);
             name.setText(fruit.getName());
             return convertView;
         }
     }
 
     public FruitAdapter adapter;
+    public List<Fruit> fruitList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        List<Fruit> fruitList = new ArrayList<Fruit>();
+        setContentView(R.layout.activity_main);
+        fruitList = new ArrayList<Fruit>();
         fruitList.add(new Fruit("apple", R.mipmap.apple));
         fruitList.add(new Fruit("banana", R.mipmap.banana));
         fruitList.add(new Fruit("cherry", R.mipmap.cherry));
@@ -59,8 +65,9 @@ public class MainActivity extends ListActivity {
         fruitList.add(new Fruit("strawberry", R.mipmap.strawberry));
         fruitList.add(new Fruit("watermelon", R.mipmap.watermelon));
         adapter = new FruitAdapter(this, R.layout.fruit, fruitList);
-        ListView listView = (ListView)findViewById(R.id.list);
+        ListView listView = new ListView(this);
         listView.setAdapter(adapter);
         RelativeLayout window = (RelativeLayout)findViewById(R.id.window);
+        window.addView(listView);
     }
 }
