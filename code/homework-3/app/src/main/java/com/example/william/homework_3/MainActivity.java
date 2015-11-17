@@ -1,11 +1,13 @@
 package com.example.william.homework_3;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Fruit fruit = getItem(position);
+            final Fruit fruit = getItem(position);
             LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             if (convertView == null) {
                 convertView = inflater.inflate(resourceId, null, false);
@@ -43,16 +45,38 @@ public class MainActivity extends AppCompatActivity {
             //para.height = img.getHeight();
             //name.setLayoutParams(para);
             name.setText(fruit.getName());
+            img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mBundle.putString("Data", "I love " + fruit.getName().toString());
+                    intent.putExtras(mBundle);
+                    startActivity(intent);
+                }
+            });
             return convertView;
         }
+        @Override
+        public boolean areAllItemsEnabled() {
+            return true;
+        }
+        @Override
+        public boolean isEnabled(int position) {
+            return true;
+        }
+
     }
 
     public FruitAdapter adapter;
     public List<Fruit> fruitList;
 
+    private Intent intent;
+    private Bundle mBundle = new Bundle();
+    private ListView listView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        intent = new Intent(this, FruitActivitty.class);
         setContentView(R.layout.activity_main);
         fruitList = new ArrayList<Fruit>();
         fruitList.add(new Fruit("apple", R.mipmap.apple));
@@ -65,8 +89,26 @@ public class MainActivity extends AppCompatActivity {
         fruitList.add(new Fruit("strawberry", R.mipmap.strawberry));
         fruitList.add(new Fruit("watermelon", R.mipmap.watermelon));
         adapter = new FruitAdapter(this, R.layout.fruit, fruitList);
-        ListView listView = new ListView(this);
+        listView = new ListView(this);
         listView.setAdapter(adapter);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                fruitList.remove(position);
+                adapter.notifyDataSetChanged();
+                listView.invalidate();
+                return false;
+            }
+        });
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Fruit fruit = fruitList.get(position);
+//                mBundle.putString("Data", "I love " + fruit.getName().toString());
+//                intent.putExtras(mBundle);
+//                startActivity(intent);
+//            }
+//        });
         RelativeLayout window = (RelativeLayout)findViewById(R.id.window);
         window.addView(listView);
     }
