@@ -11,7 +11,7 @@ public class MusicService extends Service {
 
     public MusicService() {
         try {
-            mp.setDataSource("/data/You.mp3");
+            mp.setDataSource("/data/Wonderful Rush.mp3");
             mp.prepare();
         } catch (Exception e) {
             e.printStackTrace();
@@ -30,5 +30,23 @@ public class MusicService extends Service {
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         return binder;
+    }
+
+    public void stop() {
+        try {
+            mp.stop();
+            mp.prepare();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mp.seekTo(0);
+        mp.getDuration();
+    }
+
+    @Override
+    public void onDestroy() {
+        mp.stop();
+        mp.release();
+        super.onDestroy();
     }
 }
