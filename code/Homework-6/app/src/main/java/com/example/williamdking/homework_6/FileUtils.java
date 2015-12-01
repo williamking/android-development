@@ -12,10 +12,9 @@ import java.util.ConcurrentModificationException;
  * Created by William.D.King on 2015/11/27.
  */
 public class FileUtils {
-    public void saveContent(Context context, String filename, String fileText) {
+    public void saveContent(Context context, String fileName, String fileText) {
         try {
             FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-
             fos.write(fileText.getBytes());
             fos.close();
 
