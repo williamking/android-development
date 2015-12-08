@@ -53,6 +53,7 @@ public class MyDataBaseHelpter extends SQLiteOpenHelper {
         values.put("_pnumber", entity.get_pnumber());
 
         int rows = db.update(TABLE_NAME, values, whereClause, whereArgs);
+        return rows;
     }
 
     public int delete(Contact entity) {
