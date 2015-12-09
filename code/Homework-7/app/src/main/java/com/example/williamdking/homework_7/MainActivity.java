@@ -1,22 +1,27 @@
 package com.example.williamdking.homework_7;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -32,6 +37,37 @@ public class MainActivity extends Activity {
     private  Cursor cursor;
     private ArrayList<Map<String, String>> datalist;
 
+    private class DeleteDialog extends AlertDialog {
+        private int id;
+
+        public DeleteDialog(Context context, int id) {
+            super(context);
+            this.id = id;
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.dialog_delete);
+            setTitle("Delete");
+            Button delBtn = (Button)findViewById(R.id.delete);
+            delBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    LayoutInflater inflater = (LayoutInflater)(getApplicationContext()).getSystemService(LAYOUT_INFLATER_SERVICE);
+                    Object item = contactList.getItemAtPosition(id);
+                    String no = ((HashMap)item).get("no").toString();
+                    String name = ((HashMap)item).get("name").toString();
+                    String pnumber = ((HashMap)item).get("pNumber").toString();
+                    Contact contact = new Contact(no, name, pnumber);
+                    dataBaseHelpter.delete(contact);
+                    contactList.remove(id);
+                }
+            });
+        }
+    }
+
+    private DeleteDialog deleteDialog;
 
     private class MySimpleAdapater extends SimpleAdapter {
         private ArrayList<Map<String, String>> mData;
@@ -47,6 +83,7 @@ public class MainActivity extends Activity {
             final int mPosition = position;
             return super.getView(position, convertView, parent);
         }
+
     }
 
     @Override
@@ -64,6 +101,13 @@ public class MainActivity extends Activity {
 
         contactList = new ListView(this);
         contactList.setAdapter(contactAdapter);
+        contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                deleteDialog = new DeleteDialog(MainActivity.this, i);
+                deleteDialog.show();
+            }
+        });
 
 
         Button addList = (Button)findViewById(R.id.add_contact);
