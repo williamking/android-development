@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.sql.BatchUpdateException;
 
@@ -38,6 +39,8 @@ public class EditFileActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_file);
+
+        Toast.makeText(EditFileActivity.this, "Login Success", Toast.LENGTH_SHORT).show();
 
         save = (Button)findViewById(R.id.save);
         read = (Button)findViewById(R.id.read);

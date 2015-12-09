@@ -84,7 +84,7 @@ public class LoginActivity extends Activity {
                 if ((username.getText().toString().compareTo(regInfo.getString("user", "")) == 0) && (password.getText().toString().compareTo(regInfo.getString("password", ""))) == 0) {
                     startActivity(intent);
                 } else {
-                    Toast.makeText(LoginActivity.this, "Login Error", Toast.LENGTH_SHORT).show();
+                      Toast.makeText(LoginActivity.this, "Login Error", Toast.LENGTH_SHORT).show();
                 }
             }
         });

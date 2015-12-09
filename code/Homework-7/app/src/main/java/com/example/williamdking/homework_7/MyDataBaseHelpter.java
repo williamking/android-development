@@ -20,7 +20,7 @@ public class MyDataBaseHelpter extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TABLE = "CREATE table" + TABLE_NAME + "(_id integer primary key autoincrement, " + "_mp text not null, _name text not null, _pnumber text);";
+        String CREATE_TABLE = "CREATE table " + TABLE_NAME + "(_id integer primary key autoincrement, " + "_no text not null, _name text not null, _pnumber text);";
         db.execSQL(CREATE_TABLE);
     }
 
