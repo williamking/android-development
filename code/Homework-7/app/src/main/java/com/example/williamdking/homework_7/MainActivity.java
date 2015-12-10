@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -61,13 +62,65 @@ public class MainActivity extends Activity {
                     String pnumber = ((HashMap)item).get("pNumber").toString();
                     Contact contact = new Contact(no, name, pnumber);
                     dataBaseHelpter.delete(contact);
-                    contactList.remove(id);
+                    datalist.remove(id);
+                    contactAdapter.notifyDataSetChanged();
+                    DeleteDialog.this.dismiss();
+                    Toast.makeText(MainActivity.this, "Delete Success", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private class EditDialog extends AlertDialog {
+        private int id;
+        private String no;
+        private String name;
+        private String pnumber;
+
+        public EditDialog(Context context, int id, String no, String name, String pnumber) {
+            super(context);
+            this.id = id;
+            this.no = no;
+            this.name = name;
+            this.pnumber = pnumber;
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.dialog_edit);
+            setTitle("Delete");
+            Button delBtn = (Button)findViewById(R.id.edit_contact);
+            ((EditText) findViewById(R.id.edit_name)).setText(name);
+            ((EditText) findViewById(R.id.edit_pnumber)).setText(pnumber);
+            delBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    LayoutInflater inflater = (LayoutInflater) (getApplicationContext()).getSystemService(LAYOUT_INFLATER_SERVICE);
+                    String name_info = ((EditText) findViewById(R.id.edit_name)).getText().toString();
+                    String pnumber_info = ((EditText) findViewById(R.id.edit_pnumber)).getText().toString();
+                    if (name_info.length() < 4) {
+                        Toast.makeText(MainActivity.this, "The length of name should be at least 4", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (pnumber_info.length() != 11) {
+                        Toast.makeText(MainActivity.this, "The length of name should be 11", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Contact contact = new Contact(no, name_info, pnumber_info);
+                    dataBaseHelpter.update(contact);
+                    datalist.clear();
+                    setData(datalist);
+                    contactAdapter.notifyDataSetChanged();
+                    EditDialog.this.dismiss();
+                    Toast.makeText(MainActivity.this, "Edit Success", Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
 
     private DeleteDialog deleteDialog;
+    private EditDialog editDialog;
 
     private class MySimpleAdapater extends SimpleAdapter {
         private ArrayList<Map<String, String>> mData;
@@ -106,6 +159,15 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 deleteDialog = new DeleteDialog(MainActivity.this, i);
                 deleteDialog.show();
+            }
+        });
+        contactList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                editDialog = new EditDialog(MainActivity.this, position, ((TextView)view.findViewById(R.id.no)).getText().toString(),
+                        ((TextView)view.findViewById(R.id.name)).getText().toString(), ((TextView)view.findViewById(R.id.pnumber)).getText().toString());
+                editDialog.show();
+                return true;
             }
         });
 

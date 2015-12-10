@@ -26,8 +26,16 @@ public class DetailActivity extends AppCompatActivity {
                 String no = ((EditText)findViewById(R.id.no_info)).getText().toString();
                 String name = ((EditText)findViewById(R.id.name_info)).getText().toString();
                 String pnumber = ((EditText)findViewById(R.id.pnumber_info)).getText().toString();
-                if (no.length() == 0 || name.length() == 0 || pnumber.length() != 11) {
-                    Toast.makeText(DetailActivity.this, "Information Wrong", Toast.LENGTH_SHORT).show();
+                if (no.length() != 8) {
+                    Toast.makeText(DetailActivity.this, "The length of no should be 8", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (name.length() < 4) {
+                    Toast.makeText(DetailActivity.this, "The length of name should be at least 4", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (pnumber.length() != 11) {
+                    Toast.makeText(DetailActivity.this, "The length of pnumber should be 11", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Intent intent = new Intent(DetailActivity.this, MainActivity.class);
