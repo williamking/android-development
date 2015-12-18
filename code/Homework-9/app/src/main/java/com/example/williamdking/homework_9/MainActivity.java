@@ -43,9 +43,9 @@ public class MainActivity extends AppCompatActivity {
 
     public class Download implements Runnable {
         private final String NAMESPACE = "http://WebXml.com.cn/";
-        private final String METHODNAME = "enVliadateByte";
-        private final String SOAPACTION = "http://WebXml.com/cn/enValidateByte";
-        private final String URL = "http://webservice.webxml.com.cn/Webservices/ValidateCodeWebService.asmx";
+        private final String METHODNAME = "enValidateByte";
+        private final String SOAPACTION = "http://WebXml.com.cn/enValidateByte";
+        private final String URL = "http://webservice.webxml.com.cn/WebServices/ValidateCodeWebService.asmx";
         Download() {
             super();
         }
@@ -53,9 +53,10 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             SoapObject request = new SoapObject(NAMESPACE, METHODNAME);
             //Log.e("str", MainActivity.str);
-            request.addProperty("byString", "check");
+            request.addProperty("byString", ((EditText)findViewById(R.id.confirm_code)).getText().toString());
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER10);
             envelope.dotNet = true;
+            envelope.setOutputSoapObject(request);
             HttpTransportSE transportSE = new HttpTransportSE(URL);
             try {
                 transportSE.call(SOAPACTION, envelope);
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             }
             Log.e("fault", envelope.bodyIn.toString());
             SoapObject result = (SoapObject)envelope.bodyIn;
-            SoapPrimitive detail = (SoapPrimitive)result.getProperty("EnValidateByteResult");
+            SoapPrimitive detail = (SoapPrimitive)result.getProperty("enValidateByteResult");
 
             Message message = new Message();
             message.what = UPDATE;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                sendHttpRequest();
             }
         });
     }

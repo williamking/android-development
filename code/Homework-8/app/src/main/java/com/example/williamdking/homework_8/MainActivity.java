@@ -23,16 +23,17 @@ import java.net.URL;
 
 public class MainActivity extends Activity {
 
-    private static final String url = "http://www.webservice.webxml.com.cm/WebServices/MobileCodeWS.asmx/" + "getMobileCPdeInfo";
+    private static final String url = "http://webservice.webxml.com.cn/WebServices/MobileCodeWS.asmx/" + "getMobileCodeInfo";
     private EditText phone_number;
     private EditText content;
     private static final int UPDATE_CONTENT = 0;
     private android.os.Handler handler = new android.os.Handler() {
-        public void handleMessage(Message message) {
+        @Override
+        public void handleMessage(Message message)   {
             switch (message.what) {
                 case UPDATE_CONTENT:
                     content.setText(message.obj.toString());
-                    Toast.makeText(MainActivity.this, "hhh", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Search Success", Toast.LENGTH_LONG).show();
                     break;
                 default:
                     break;
@@ -42,19 +43,19 @@ public class MainActivity extends Activity {
     private HttpURLConnection connection = null;
 
     private void sendRequestHttpURLConnection() {
-        new Thread(new Runnable() {
+        (new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    connection = (HttpURLConnection)((new URL(url.toString()).openConnection()));
+                    connection = (HttpURLConnection)((new URL(url.toString() + "?mobileCode=" + phone_number.getText().toString() + "&userID=").openConnection()));
 
-                    connection.setRequestMethod("POST");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
+                    connection.setRequestMethod("GET");
+                    connection.setConnectTimeout(40000);
+                    connection.setReadTimeout(40000);
 
-                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                    //DataOutputStream out = new DataOutputStream(connection.getOutputStream());
 
-                    out.writeBytes("mobileCode=" + phone_number.getText().toString() + "&userID=");
+                    //out.writeBytes("mobileCode=" + phone_number.getText().toString() + "&userID=");
 
 //                    if (connection.getResponseCode() == 200) {
 //                        handler.hand
@@ -72,13 +73,11 @@ public class MainActivity extends Activity {
                         response.append(line);
                     }
 
-                    Toast.makeText(MainActivity.this, "Search Success", Toast.LENGTH_LONG).show();
-
                     Message message = new Message();
 
                     message.what = UPDATE_CONTENT;
                     message.obj = parseXMLWithPull(response.toString());
-                    handler.handleMessage(message);
+                    handler.sendMessage(message);
 
                 }  catch (Exception e) {
                     e.printStackTrace();
@@ -88,7 +87,7 @@ public class MainActivity extends Activity {
                     }
                 }
             }
-        });
+        })).start();
     }
 
     private String parseXMLWithPull(String xml) {
@@ -113,8 +112,8 @@ public class MainActivity extends Activity {
                     default:
                         break;
                 }
+                eventType = parser.next();
             }
-            eventType = parser.next();
 
         } catch (Exception e) {
             e.printStackTrace();
