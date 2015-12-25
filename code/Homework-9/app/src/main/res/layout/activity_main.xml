@@ -26,8 +26,10 @@
             android:text="CREATE"
             android:id="@+id/create"/>
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/image"/>
+            android:layout_width="fill_parent"
+            android:layout_height="70dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/image"
+            android:layout_gravity="center_horizontal"/>
     </LinearLayout>
 </RelativeLayout>

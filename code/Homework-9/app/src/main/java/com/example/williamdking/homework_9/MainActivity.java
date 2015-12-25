@@ -1,5 +1,6 @@
 package com.example.williamdking.homework_9;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -25,11 +26,14 @@ public class MainActivity extends AppCompatActivity {
     private Button create;
     private static final int UPDATE = 0;
     private ImageView image;
+    private ProgressDialog progressDialog = null;
 
     private Handler handler = new Handler() {
-        public void handlerMessage(Message message) {
+        @Override
+        public void handleMessage(Message message) {
             switch (message.what) {
                 case UPDATE:
+                    progressDialog.cancel();
                     byte[] data = Base64.decode((message.obj.toString()).getBytes(), Base64.DEFAULT);
                     Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                     ImageView image = (ImageView)findViewById(R.id.image);
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER10);
             envelope.dotNet = true;
             envelope.setOutputSoapObject(request);
-            HttpTransportSE transportSE = new HttpTransportSE(URL);
+            HttpTransportSE transportSE = new HttpTransportSE(URL, 120000);
             try {
                 transportSE.call(SOAPACTION, envelope);
             } catch (Exception e) {
@@ -70,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             Message message = new Message();
             message.what = UPDATE;
             message.obj = detail;
-            handler.handleMessage(message);
+            handler.sendMessage(message);
         }
     }
 
@@ -86,6 +90,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 sendHttpRequest();
+                if (progressDialog == null) progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setTitle("Requesting");
+                progressDialog.setMessage("requesting....");
+                progressDialog.setIndeterminate(true);
+                progressDialog.show();
             }
         });
     }
