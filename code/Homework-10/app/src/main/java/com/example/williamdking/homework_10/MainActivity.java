@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private SensorManager sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+    private Sensor magneticSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+    private Sensor accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
     private RelativeLayout compass;
     private Button location;
@@ -91,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        sensorManager.registerListener(listener, magneticSensor, SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(listener, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
+
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,8 +106,46 @@ public class MainActivity extends AppCompatActivity {
                     longitude.setText("" + loc.getLongitude());
                     latitude.setText("" + loc.getLatitude());
                 }
+                locationManager.requestLocationUpdates(provider, 5000, 1, locationListener);
             }
         });
 
     }
+
+    protected void OnDestroy() {
+        super.onDestroy();
+
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(listener);
+        }
+
+        if (locationListener != null) {
+            locationManager.removeUpdates(locationListener);
+        }
+
+    }
+
+    private LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location loc) {
+            longitude.setText("" + loc.getLongitude());
+            latitude.setText("" + loc.getLatitude());
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
+
 }
