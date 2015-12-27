@@ -1,5 +1,6 @@
 package com.example.williamdking.homework_9;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -25,11 +26,14 @@ public class MainActivity extends AppCompatActivity {
     private Button create;
     private static final int UPDATE = 0;
     private ImageView image;
+    private ProgressDialog progressDialog = null;
 
     private Handler handler = new Handler() {
-        public void handlerMessage(Message message) {
+        @Override
+        public void handleMessage(Message message) {
             switch (message.what) {
                 case UPDATE:
+                    progressDialog.cancel();
                     byte[] data = Base64.decode((message.obj.toString()).getBytes(), Base64.DEFAULT);
                     Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                     ImageView image = (ImageView)findViewById(R.id.image);
@@ -43,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
     public class Download implements Runnable {
         private final String NAMESPACE = "http://WebXml.com.cn/";
-        private final String METHODNAME = "enVliadateByte";
-        private final String SOAPACTION = "http://WebXml.com/cn/enValidateByte";
-        private final String URL = "http://webservice.webxml.com.cn/Webservices/ValidateCodeWebService.asmx";
+        private final String METHODNAME = "enValidateByte";
+        private final String SOAPACTION = "http://WebXml.com.cn/enValidateByte";
+        private final String URL = "http://webservice.webxml.com.cn/WebServices/ValidateCodeWebService.asmx";
         Download() {
             super();
         }
@@ -53,10 +57,11 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             SoapObject request = new SoapObject(NAMESPACE, METHODNAME);
             //Log.e("str", MainActivity.str);
-            request.addProperty("byString", "check");
+            request.addProperty("byString", ((EditText)findViewById(R.id.confirm_code)).getText().toString());
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER10);
             envelope.dotNet = true;
-            HttpTransportSE transportSE = new HttpTransportSE(URL);
+            envelope.setOutputSoapObject(request);
+            HttpTransportSE transportSE = new HttpTransportSE(URL, 120000);
             try {
                 transportSE.call(SOAPACTION, envelope);
             } catch (Exception e) {
@@ -64,12 +69,12 @@ public class MainActivity extends AppCompatActivity {
             }
             Log.e("fault", envelope.bodyIn.toString());
             SoapObject result = (SoapObject)envelope.bodyIn;
-            SoapPrimitive detail = (SoapPrimitive)result.getProperty("EnValidateByteResult");
+            SoapPrimitive detail = (SoapPrimitive)result.getProperty("enValidateByteResult");
 
             Message message = new Message();
             message.what = UPDATE;
             message.obj = detail;
-            handler.handleMessage(message);
+            handler.sendMessage(message);
         }
     }
 
@@ -84,7 +89,12 @@ public class MainActivity extends AppCompatActivity {
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                sendHttpRequest();
+                if (progressDialog == null) progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setTitle("Requesting");
+                progressDialog.setMessage("requesting....");
+                progressDialog.setIndeterminate(true);
+                progressDialog.show();
             }
         });
     }
