@@ -11,6 +11,5 @@ public class TalkActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_talk);
         Toast.makeText(TalkActivity.this, "聊天室连接成功", Toast.LENGTH_SHORT).show();
-
     }
 }
