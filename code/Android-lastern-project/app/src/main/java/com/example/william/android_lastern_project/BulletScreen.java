@@ -12,10 +12,12 @@ public class BulletScreen extends Application {
 
     public OutputStream outputStream;
     public BufferedReader bufferedReader;
+    public ConnectActivity.ContactThread listeningThread;
 
     BulletScreen() {
         outputStream = null;
         bufferedReader = null;
+        listeningThread = null;
     }
 
 }

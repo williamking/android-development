@@ -15,15 +15,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:minHeight="300dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="请输入您的昵称(昵称为空视为匿名):"/>
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/nickname"/>
+                android:id="@+id/comment_list"
+                android:text="弹幕列表"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

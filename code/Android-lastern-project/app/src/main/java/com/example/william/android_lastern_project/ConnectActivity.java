@@ -32,8 +32,10 @@ public class ConnectActivity extends AppCompatActivity {
         try {
             socket = new Socket();
             socket.connect(new InetSocketAddress(url, port), 5000);
-            ((BulletScreen)getApplication()).outputStream = socket.getOutputStream();
-            ((BulletScreen)getApplication()).bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            bulletScreen.outputStream = socket.getOutputStream();
+            bulletScreen.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            bulletScreen.listeningThread = new ContactThread();
+            bulletScreen.listeningThread.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,11 +45,6 @@ public class ConnectActivity extends AppCompatActivity {
 
         private String ip;
         private int port;
-
-        public ContactThread(String ipaddr, int portNum) {
-            ip = ipaddr;
-            port = portNum;
-        }
 
         @Override
         public void run() {
@@ -81,7 +78,7 @@ public class ConnectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String addr = url.getText().toString();
-                connectToSever(addr);
+                connectToSever(addr, 8080);
             }
 
         });
