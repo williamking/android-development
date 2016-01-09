@@ -1,5 +1,9 @@
 package com.example.william.android_lastern_project;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,61 +28,25 @@ public class ConnectActivity extends AppCompatActivity {
 
     private Button connect;
     private EditText url;
-    private BulletScreen bulletScreen;
-    private Socket socket;
-    private ContactThread contactThread;
-
-    private void connectToSever(String url, int port) {
-        try {
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(url, port), 5000);
-            bulletScreen.outputStream = socket.getOutputStream();
-            bulletScreen.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            bulletScreen.listeningThread = new ContactThread();
-            bulletScreen.listeningThread.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    class ContactThread extends Thread {
-
-        private String ip;
-        private int port;
-
-        @Override
-        public void run() {
-            BufferedReader br = ((BulletScreen)getApplication()).bufferedReader;
-
-            try {
-                String content = null;
-                while ((content = br.readLine()) != null) {
-                    content += '\n';
-                }
-
-            } catch (SocketTimeoutException e) {
-
-            }   catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    private EditText port;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect);
 
-        bulletScreen = (BulletScreen)getApplication();
-
         connect = (Button)findViewById(R.id.connect);
         url = (EditText)findViewById(R.id.url);
+        port = (EditText)findViewById(R.id.port);
 
         connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(ConnectActivity.this, TalkActivity.class);
                 String addr = url.getText().toString();
-                connectToSever(addr, 8080);
+                intent.putExtra("url", addr);
+                intent.putExtra("port", Integer.parseInt(port.getText().toString()));
+                startActivity(intent);
             }
 
         });

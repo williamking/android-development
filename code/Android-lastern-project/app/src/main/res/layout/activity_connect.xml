@@ -20,14 +20,23 @@
             android:textIsSelectable="true"
             android:layout_marginBottom="100dp" />
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="请输入聊天室的域名或ip地址"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="请输入聊天室的域名或ip地址"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/url"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="请输入端口号"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/port"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -12,6 +12,22 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/title"
+            android:text="弹幕房间主题："
+            android:textAlignment="center"
+            android:layout_marginBottom="5dp">
+        </TextView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:text="离开始还有 秒"
+            android:id="@+id/time_to_start"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,6 +38,10 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/comment_list"
                 android:text="弹幕列表"/>
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lists"></ListView>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,7 +54,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/content"/>
+                android:id="@+id/bullet_text"/>
         </LinearLayout>
         <Button
             android:layout_width="wrap_content"
