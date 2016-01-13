@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,12 +34,13 @@ public class BulletScreen extends Service {
 
     public BufferedReader bufferedReader;
     public PrintWriter printer;
-    public ContactThread listeningThread;
+    public Thread listeningThread;
 
     private Socket socket;
     private String url;
     private int port;
 
+    public ArrayAdapter<String> listAdapter = null;
     public android.os.Handler handler = null;
 
     public final IBinder binder = new MyBinder();
@@ -56,7 +59,7 @@ public class BulletScreen extends Service {
     public void sendBullet(String text) {
         if (printer != null) {
             try {
-                String content = "{dm:" + '\"' + text + "\"}";
+                String content = "{\"dm\":" + '\"' + text + "\"}\n";
                 printer.print(content);
                 printer.flush();
             } catch (Exception e) {
@@ -65,57 +68,59 @@ public class BulletScreen extends Service {
         }
     }
 
-    class ContactThread extends Thread {
-
-        private String ip;
-        private int port;
+    private Runnable mRunnable = new Runnable() {
 
         @Override
         public void run() {
-            String content = "";
             try {
-                while ((content = bufferedReader.readLine()) != null) {
-                    content += '\n';
-                }
-            } catch (SocketTimeoutException e) {
-                e.printStackTrace();
-            }   catch (IOException e) {
+                socket = new Socket(url, port);
+                printer = new PrintWriter(socket.getOutputStream(), true);
+                bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            if (content != "") {
-                try {
-                    JSONTokener jsonParser = new JSONTokener(content);
-                    JSONObject obj = (JSONObject)jsonParser.nextValue();
-                    if (obj.getString("Name") != null) {
-                        if (handler != null) {
-                            Message msg = new Message();
-                            msg.what = TalkActivity.CONNECTED;
-                            msg.obj = obj;
+            String content;
+            try {
+                while (true) {
+                    //Log.e("thread", "runnning");
+                    if ((content = bufferedReader.readLine()) != null) {
+                        try {
+                            JSONTokener jsonParser = new JSONTokener(content);
+                            JSONObject obj = (JSONObject) jsonParser.nextValue();
+                            if (obj.has("Name") && obj.getString("Name") != null) {
+                                if (handler != null) {
+                                    Message msg = new Message();
+                                    msg.what = TalkActivity.CONNECTED;
+                                    msg.obj = obj;
+                                    handler.sendMessage(msg);
+                                }
+                            } else {
+                                if (obj.has("dm") && obj.getString("dm") != null) {
+                                    Message msg  = new Message();
+                                    msg.what = TalkActivity.UPDATE;
+                                    msg.obj = obj;
+                                    handler.sendMessage(msg);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-    }
+    };
 
     @Override
     public IBinder onBind(Intent intent) {
         url = intent.getExtras().getString("url");
         port = intent.getExtras().getInt("port");
 
-        try {
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(url, port), 5000);
-            printer = new PrintWriter(socket.getOutputStream(), true);
-            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            listeningThread = new ContactThread();
-            listeningThread.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        listeningThread = new Thread(mRunnable);
+        listeningThread.start();
 
         return binder;
     }

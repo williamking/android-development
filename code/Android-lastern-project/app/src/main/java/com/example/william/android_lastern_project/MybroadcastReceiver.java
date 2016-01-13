@@ -11,6 +11,15 @@ import android.widget.RemoteViews;
  * Created by william on 2016/1/9.
  */
 public class MybroadcastReceiver extends BroadcastReceiver{
+    private String url;
+    private int port;
+
+    public MybroadcastReceiver(String addr, int portNum) {
+        super();
+        url = addr;
+        port = portNum;
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
